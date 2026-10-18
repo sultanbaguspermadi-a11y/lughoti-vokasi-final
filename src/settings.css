@@ -1,0 +1,53 @@
+/* Display settings sheet. The preview stays pinned; "Selesai" stays reachable at the bottom. */
+.set{display:grid;gap:var(--s5);padding-top:var(--s4)}
+.set-preview{position:sticky;top:0;z-index:2;padding:0 var(--s3);background:var(--field);border:1px solid var(--line);border-radius:var(--r-panel)}
+.set-preview__tab{border-bottom:1px solid var(--rule);font:600 var(--fs-small)/1 var(--ui-font)}
+.set-preview__tab span{display:inline-block;padding:var(--s2) 0 var(--s1);box-shadow:inset 0 -2px 0 var(--acc-ink)}
+.set-preview__tab small{margin-inline-start:.35rem;font-size:inherit;color:var(--ink-3)}
+.set-row{display:grid;grid-template-columns:1.75rem minmax(0,1fr) minmax(0,48%);align-items:center;gap:0 var(--s2);padding-block:var(--s1)}
+@media (min-width:600px){.set-row .entry__ar{font-size:var(--ar-size)}}
+@media (max-height:720px){.set-preview{position:static}}
+
+.set-group{display:grid;min-width:0}
+.set-gh{display:flex;align-items:center;justify-content:space-between;gap:var(--s3);border-bottom:1px solid var(--ink)}
+.set-gh h3{font:600 var(--fs-section)/1.3 var(--ui-font)}
+.set-field{display:grid;gap:var(--s2);min-width:0;padding:var(--s3) 0;border-bottom:1px solid var(--rule)}
+.set-label{font:600 var(--fs-small)/1.35 var(--ui-font)}
+.set-hint{margin-top:2px;color:var(--ink-3);font:400 var(--fs-label)/1.45 var(--ui-font)}
+.set-head{display:flex;align-items:baseline;justify-content:space-between;gap:var(--s3)}
+.set-value{color:var(--ink-3);font:500 var(--fs-small)/1 var(--ui-font);font-variant-numeric:tabular-nums}
+.set-range{display:block;width:100%;height:2.75rem;margin:0;accent-color:var(--acc-ink);cursor:pointer}
+@media (max-width:719px){.set-width{display:none}}   /* the slider's minimum is wider than a phone */
+
+.set-fonts{display:grid;gap:var(--s2)}
+.set-fonts--3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.set-fonts--2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.set-fonts button{display:grid;justify-items:center;gap:2px;min-height:4rem;padding:var(--s2) var(--s1);border:1px solid var(--line-ctl);border-radius:var(--r-ctl);background:var(--field);color:var(--ink)}
+.set-fonts button:hover{background:var(--wash)}
+.set-fonts button[aria-pressed=true]{border:2px solid var(--acc-ink);background:var(--acc-wash);padding:calc(var(--s2) - 1px) calc(var(--s1) - 1px)}
+.set-fonts__s{font-size:1.375rem;line-height:1.6;white-space:nowrap}
+.set-fonts__n{color:var(--ink-3);font:500 var(--fs-label)/1.2 var(--ui-font);text-align:center;overflow-wrap:normal;text-wrap:balance}
+.set-fonts button[aria-pressed=true] .set-fonts__n{color:var(--ink);font-weight:600}
+
+.set-more summary{display:flex;align-items:center;min-height:2.75rem;color:var(--acc-ink);font:600 var(--fs-small)/1 var(--ui-font);cursor:pointer}
+.set-more[open] summary{border-bottom:1px solid var(--rule)}
+.set-more .set-field:last-child{border-bottom:0}
+
+.set-swatches{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.set-swatches button{display:grid;place-items:center;width:2.75rem;height:2.75rem;border-radius:50%;border:3px solid var(--paper);box-shadow:0 0 0 1px var(--line);color:#fff}
+.set-swatches button[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}   /* ring plus a check mark: never colour alone */
+
+/* native checkbox underneath, so keyboard and screen readers keep working */
+.set-switch{display:flex;align-items:center;justify-content:space-between;gap:var(--s4);min-height:3.25rem}
+.set-switch input{appearance:none;-webkit-appearance:none;flex:none;position:relative;width:2.9rem;height:1.7rem;margin:0;border-radius:var(--r-pill);background:var(--line-ctl);cursor:pointer}
+.set-switch input::after{content:"";position:absolute;top:.2rem;left:.2rem;width:1.3rem;height:1.3rem;border-radius:50%;background:#fff;transition:transform var(--dur-1) var(--ease)}
+.set-switch input:checked{background:var(--acc)}
+.set-switch input:checked::after{transform:translateX(1.2rem)}
+
+/* sticky action bar: a real last row of the scroll area (the sheet body has no bottom padding, see .dlg__body--flush).
+   It bleeds to the sheet edges by cancelling the body's side padding, and carries the safe-area inset itself. */
+.set-foot{--sl:max(var(--gx),env(safe-area-inset-left));--sr:max(var(--gx),env(safe-area-inset-right));position:sticky;bottom:0;z-index:3;display:grid;gap:var(--s2);margin-inline:calc(-1*var(--sl)) calc(-1*var(--sr));padding:var(--s3) var(--sr) max(var(--s3),env(safe-area-inset-bottom)) var(--sl);background:var(--paper);border-top:1px solid var(--line)}
+.set-foot__acts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--s2)}
+.set-foot__acts .btn{min-height:3rem;padding-inline:var(--s2)}
+.set-undo{color:var(--ink-2);font:400 var(--fs-small)/1.5 var(--ui-font)}
+.set-undo .link{min-height:2rem;padding:0 var(--s1)}

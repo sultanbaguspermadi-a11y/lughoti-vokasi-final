@@ -1,0 +1,32 @@
+/* Cover: one centred axis, generous space, three zones (label / title / author + action).
+   Everything is centred on the same vertical line; colour is the user's accent and ink, nothing else. */
+.cover{display:grid;grid-template-rows:auto 1fr auto;justify-items:center;min-height:100dvh;text-align:center;
+  padding:max(var(--s5),env(safe-area-inset-top)) max(var(--gx),env(safe-area-inset-right)) max(var(--s5),env(safe-area-inset-bottom)) max(var(--gx),env(safe-area-inset-left));
+  background:var(--paper);color:var(--ink)}
+
+.cover__top{margin:0;color:var(--ink-3);font:600 var(--fs-label)/1.4 var(--ui-font);letter-spacing:.18em;text-transform:uppercase;text-indent:.18em}   /* indent cancels the trailing tracking so the line is optically centred */
+
+.cover__center{display:grid;justify-items:center;align-content:center;gap:var(--s2);width:100%}
+/* Riq'ah: compact, leaning, with a rising line. The tall line-height only makes room for the harakat. */
+.cover__ar{margin:0;color:var(--acc-ink);font-family:"Aref Ruqaa",var(--ar-font);font-weight:700;font-size:clamp(5.5rem,min(33vw,19vh),11rem);line-height:1.5;letter-spacing:0;word-spacing:0;
+  animation:cal-write 1.2s var(--ease) .1s both}
+@keyframes cal-write{from{clip-path:inset(-20% -5% -20% 100%)}to{clip-path:inset(-20% -5% -20% -5%)}}
+
+.cover__title{display:grid;justify-items:center;margin:0;font-family:var(--serif);line-height:1}
+.cover__latin{font-size:clamp(2.75rem,13vw,4.5rem);font-weight:600;letter-spacing:-.03em;text-indent:-.03em}   /* negative tracking trails the last letter: indent re-centres the word */
+.cover__voc{margin-top:var(--s3);color:var(--ink-3);font-size:clamp(1rem,4.2vw,1.25rem);font-style:italic;font-weight:400;letter-spacing:.02em}
+
+.cover__foot{display:grid;justify-items:center;gap:var(--s3);width:100%}
+.cover__author{margin:0;color:var(--ink-2);font:600 var(--fs-label)/1.4 var(--ui-font);letter-spacing:.18em;text-transform:uppercase;text-indent:.18em}
+.cover__author::before{content:"";display:block;width:2rem;height:1px;margin:0 auto var(--s3);background:var(--ink-3);opacity:.6}   /* the only ornament: a short rule that separates title from author */
+.cover__cta{width:min(100%,18rem)}
+.cover__about{color:var(--ink-3);font-size:var(--fs-small)}
+
+@media (min-width:900px){
+  .cover__ar{font-size:clamp(6rem,22vh,11rem)}
+  .cover__latin{font-size:clamp(3.5rem,9vh,5.5rem)}
+}
+@media (max-height:640px){
+  .cover__ar{font-size:clamp(4rem,20vw,6rem);line-height:1.35}
+  .cover__latin{font-size:clamp(2.25rem,9vw,3rem)}
+}
