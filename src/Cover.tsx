@@ -9,8 +9,8 @@ export default function Cover({ onStart, onAbout }: Props) {
       <p className="cover__top">Kamus Digital Arab–Indonesia</p>
 
       <section className="cover__center" aria-labelledby="cover-title">
-        {/* real text (selectable, read aloud as "lughatī"), set in a Riq'ah face */}
-        <p className="cover__ar" lang="ar" dir="rtl">لُغَتِي</p>
+        {/* real text (selectable, unvocalised, read aloud as "lughatī"), set in a Riq'ah face */}
+        <p className="cover__ar" lang="ar" dir="rtl">لغتي</p>
         <h1 id="cover-title" className="cover__title">
           <span className="cover__latin">Lughati</span>{' '}
           <span className="cover__voc">Vokasi</span>

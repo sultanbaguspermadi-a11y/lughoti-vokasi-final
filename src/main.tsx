@@ -8,7 +8,7 @@ import '@fontsource/source-serif-4/latin-400.css'; import '@fontsource/source-se
 import '@fontsource/source-serif-4/latin-ext-400.css'; import '@fontsource/source-serif-4/latin-ext-600.css'; import '@fontsource/source-serif-4/latin-ext-400-italic.css'
 // Reading-font choice "Atkinson Hyperlegible" (designed for low-vision legibility).
 import '@fontsource/atkinson-hyperlegible-next/latin-400.css'; import '@fontsource/atkinson-hyperlegible-next/latin-600.css'
-// Cover headline: لُغَتِي in a Riq'ah hand.
+// Cover headline: لغتي (no harakat) in a Riq'ah hand.
 import '@fontsource/aref-ruqaa/arabic-700.css'
 import './index.css'
 import App from './App'

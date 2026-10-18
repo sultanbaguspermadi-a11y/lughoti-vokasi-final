@@ -33,7 +33,7 @@ export default function About({ counts, onBack }: Props) {
           <h1 className="about__title">Bahasa Arab yang akhirnya nyambung dengan jurusanmu</h1>
           <div className="about__tag">
             <p>“Bahasaku dalam profesiku”</p>
-            <span className="ar" lang="ar" dir="rtl">لُغَتِي فِي مِهْنَتِي</span>
+            <span className="ar" lang="ar" dir="rtl">لغتي في مهنتي</span>
           </div>
         </header>
 

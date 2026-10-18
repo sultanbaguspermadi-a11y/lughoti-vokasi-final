@@ -61,4 +61,4 @@ Tidak ada pelacak, akun, atau permintaan ke pihak ketiga. Favorit, riwayat, dan 
 - **Pengaturan > Font teks Indonesia** kini berlaku untuk semua teks Indonesia (menu, tab, tombol, arti kata). Pilihan ditambah: Atkinson Hyperlegible.
 - **Atur ulang semua** (tombol di bilah bawah Pengaturan) + **Urungkan**; tombol atur ulang per kelompok nonaktif bila sudah bawaan.
 - Preferensi tersimpan divalidasi (`normalizePrefs`), font/angka rusak kembali ke bawaan.
-- **Sampul** minimalis, rata tengah: judul Arab لُغَتِي dalam font Riq'ah (Aref Ruqaa, teks asli), judul Latin, nama penyusun, satu tombol.
+- **Sampul** minimalis, rata tengah: judul Arab لغتي (tanpa harakat) dalam font Riq'ah (Aref Ruqaa, teks asli), judul Latin, nama penyusun, satu tombol.

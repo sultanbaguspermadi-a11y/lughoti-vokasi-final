@@ -135,7 +135,7 @@ describe('Cover', () => {
     const onStart = vi.fn()
     render(<Cover onStart={onStart} onAbout={() => {}} />)
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Lughati Vokasi')
-    expect(document.querySelector('[lang=ar]')?.textContent).toBe('لُغَتِي')
+    expect(document.querySelector('[lang=ar]')?.textContent).toBe('لغتي')
     expect(screen.getByText('Sultan Bagus Permadi')).toBeTruthy()
     fireEvent.click(screen.getByText('Buka kamus'))
     expect(onStart).toHaveBeenCalledOnce()
