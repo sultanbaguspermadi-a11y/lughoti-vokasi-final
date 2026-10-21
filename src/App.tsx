@@ -1,10 +1,10 @@
-import { useEffect, useDeferredValue, useId, useMemo, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useDeferredValue, useId, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import Cover from './Cover'
 import Onboard from './Onboard'
 import Settings from './Settings'
 import About from './About'
 import { BackToTop, Ic, ICON, Khatam } from './ui'
-import { renderStory, STYLES } from './lib/share'
+import { renderStory, styleSwatch, FORMATS, STYLES, type CardFormat, type CardStyle } from './lib/share'
 import { useHistoryLayer } from './lib/nav'
 import { usePwa } from './lib/pwa'
 import { AR_FONTS, DEFAULTS, ID_FONTS, dailyWord, normalizePrefs, entryNo, entrySeq, majorOf, norm, parseDataset, stripHarakat, search, similarFor, usePersisted, isStringArray, isPlainObject, isMineValue, type Major, type Prefs, type Similar, type Word } from './lib/core'
@@ -70,7 +70,8 @@ export default function App() {
   const [sel, setSel] = useState<Word | null>(null)
   const [cfg, setCfg] = useState(false)
   const [shareW, setShareW] = useState<Word | null>(null)
-  const [style, setStyle] = useState<(typeof STYLES)[number]>('Zamrud')
+  const [style, setStyle] = useState<CardStyle>('Zamrud')
+  const [fmt, setFmt] = useState<CardFormat>('story')
   const [img, setImg] = useState<{ url: string; blob: Blob } | null>(null)
   const [note, setNote] = useState('')
   const [copied, setCopied] = useState('')
@@ -102,9 +103,9 @@ export default function App() {
   useEffect(() => {
     if (!shareW) { setImg(null); return }
     let live = true, url = ''; setImg(null); setNote('')
-    renderStory(shareW, style, p.arFont).then(b => { if (!live) return; url = URL.createObjectURL(b); setImg({ url, blob: b }) }).catch(() => live && setNote('Gagal membuat gambar.'))
+    renderStory(shareW, style, p.arFont, fmt).then(b => { if (!live) return; url = URL.createObjectURL(b); setImg({ url, blob: b }) }).catch(() => live && setNote('Gagal membuat gambar.'))
     return () => { live = false; if (url) URL.revokeObjectURL(url) }
-  }, [shareW, style, p.arFont])
+  }, [shareW, style, p.arFont, fmt])
 
   const byId = useMemo(() => new Map(data?.words.map(w => [w.id, w])), [data])
   const activeWords = useMemo(() => (data ? data.words.filter(w => w.major === major) : []), [data, major])
@@ -142,12 +143,12 @@ export default function App() {
     try { await navigator.clipboard.writeText(t) } catch { const a = document.createElement('textarea'); a.value = t; document.body.appendChild(a); a.select(); document.execCommand('copy'); a.remove() }
     setCopied(w.id); setTimeout(() => setCopied(''), 1600)
   }
-  const fname = (w: Word) => `lughati-${w.id.replace(':', '-')}.png`
-  const download = () => { if (!img || !shareW) return; const a = document.createElement('a'); a.href = img.url; a.download = fname(shareW); a.click(); setNote('Gambar diunduh. Unggah dari galeri ke Story-mu.') }
+  const fname = (w: Word) => `lughati-${w.id.replace(':', '-')}-${fmt}.png`
+  const download = () => { if (!img || !shareW) return; const a = document.createElement('a'); a.href = img.url; a.download = fname(shareW); a.click(); setNote(`Gambar diunduh. Unggah dari galeri ke ${fmt === 'story' ? 'Story' : 'Feed'}-mu.`) }
   const share = async () => {
     if (!img || !shareW) return
     const f = new File([img.blob], fname(shareW), { type: 'image/png' })
-    if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Lughati Vokasi', text: `${shareW.ar} = ${shareW.mean}` }) } catch (e) { if ((e as Error).name !== 'AbortError') download() } }
+    if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Lughati Vokasi', text: `${shareW.ar} = ${shareW.mean}\nKamus Arab–Indonesia untuk siswa SMK: ${location.origin}` }) } catch (e) { if ((e as Error).name !== 'AbortError') download() } }
     else download()
   }
   const canInstall = !pw.standalone && (pw.installable || pw.iosInstallable)
@@ -271,19 +272,29 @@ export default function App() {
           {similar.map((s, i) => <section key={i} className="sec note"><h3>Hati-hati, mirip</h3>
             <p><span lang="ar" dir="rtl">{A(s.a1)}</span> ({s.m1}) ≠ <span lang="ar" dir="rtl">{A(s.a2)}</span> ({s.m2})</p><p>{s.tip}</p></section>)}
           <div className="acts">
-            <button className="btn btn--primary btn--lg" onClick={() => setShareW(sel)}><Ic d={ICON.share} />Bagikan ke Story</button>
+            <button className="btn btn--primary btn--lg" onClick={() => setShareW(sel)}><Ic d={ICON.share} />Bagikan kartu</button>
             <button className="btn" aria-pressed={selFav} onClick={() => toggleFav(sel.id)}><Ic d={ICON.star} fill={selFav} />Simpan</button>
             <button className="btn" onClick={() => copy(sel)}><Ic d={copied === sel.id ? ICON.check : ICON.copy} />{copied === sel.id ? 'Tersalin' : 'Salin'}</button>
           </div>
           <span className="sr-only" role="status">{copied === sel.id ? 'Tersalin ke papan klip' : selFav ? 'Disimpan ke favorit' : ''}</span>
         </article>}
       </Dialog>
-      <Dialog open={!!shareW} onClose={() => setShareW(null)} title="Bagikan ke Story">
+      <Dialog open={!!shareW} onClose={() => setShareW(null)} title="Bagikan kartu">
         <div className="share">
-          <div className="story">{img ? <img src={img.url} alt={`Pratinjau kartu story untuk ${shareW?.mean ?? ''}`} /> : <span className="ld" role="status" aria-label="Membuat gambar" />}</div>
-          <div className="seg" role="group" aria-label="Gaya kartu">{STYLES.map(s => <button key={s} aria-pressed={style === s} onClick={() => setStyle(s)}>{s}</button>)}</div>
+          <div className="story" data-fmt={fmt}>{img ? <img src={img.url} alt={`Pratinjau kartu ${FORMATS[fmt].label} untuk ${shareW?.mean ?? ''}`} /> : <span className="ld" role="status" aria-label="Membuat gambar" />}</div>
+          <div className="pick">
+            <span className="pick__h" id="pick-fmt">Format</span>
+            <div className="seg" role="group" aria-labelledby="pick-fmt">{(Object.keys(FORMATS) as CardFormat[]).map(f => <button key={f} aria-pressed={fmt === f} onClick={() => setFmt(f)}>{FORMATS[f].label} <small>{FORMATS[f].ratio}</small></button>)}</div>
+          </div>
+          <div className="pick">
+            <span className="pick__h" id="pick-style">Gaya</span>
+            <div className="swatches" role="group" aria-labelledby="pick-style">{STYLES.map(s => { const c = styleSwatch(s); return (
+              <button key={s} className="swatch" aria-pressed={style === s} onClick={() => setStyle(s)} style={{ '--sw-bg': c.bg, '--sw-ink': c.ink, '--sw-acc': c.acc } as CSSProperties}>
+                <span className="swatch__chip" aria-hidden><i /><b /></span>{s}
+              </button>) })}</div>
+          </div>
           <div className="acts acts--stack"><button className="btn btn--primary btn--lg" disabled={!img} onClick={share}>Bagikan</button><button className="btn" disabled={!img} onClick={download}>Unduh PNG</button></div>
-          <p className="sub" role="status">{note || 'Gambar 1080×1920, siap untuk Instagram, WhatsApp, atau TikTok Story.'}</p>
+          <p className="sub" role="status">{note || `Gambar ${FORMATS[fmt].w}×${FORMATS[fmt].h}, siap untuk Instagram, WhatsApp, atau TikTok.`}</p>
         </div>
       </Dialog>
       <Dialog open={iosHelp} onClose={() => setIosHelp(false)} title="Pasang di layar utama">
