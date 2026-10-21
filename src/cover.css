@@ -7,10 +7,10 @@
 .cover__top{margin:0;color:var(--ink-3);font:600 var(--fs-label)/1.4 var(--ui-font);letter-spacing:.18em;text-transform:uppercase;text-indent:.18em}   /* indent cancels the trailing tracking so the line is optically centred */
 
 .cover__center{display:grid;justify-items:center;align-content:center;gap:var(--s2);width:100%}
-/* Riq'ah: compact, leaning, with a rising line. Unvocalised, so the line box only has to clear the descenders of غ and ي. */
-.cover__ar{margin:0;color:var(--acc-ink);font-family:"Aref Ruqaa",var(--ar-font);font-weight:700;font-size:clamp(5.5rem,min(33vw,19vh),11rem);line-height:1.3;letter-spacing:0;word-spacing:0;
+/* Nastaliq: tall, hanging script with deep descenders, so it needs a generous line box to avoid clipping. */
+.cover__ar{margin:0;color:var(--acc-ink);font-family:"Noto Nastaliq Urdu",var(--ar-font);font-weight:700;font-size:clamp(5.5rem,min(33vw,19vh),11rem);line-height:2.1;margin-bottom:.3em;letter-spacing:0;word-spacing:0;
   animation:cal-write 1.2s var(--ease) .1s both}
-@keyframes cal-write{from{clip-path:inset(-20% -5% -20% 100%)}to{clip-path:inset(-20% -5% -20% -5%)}}
+@keyframes cal-write{from{clip-path:inset(-60% -10% -60% 100%)}to{clip-path:inset(-60% -10% -60% -10%)}}   /* tall vertical margin: Nastaliq ink overshoots the line box */
 
 .cover__title{display:grid;justify-items:center;margin:0;font-family:var(--serif);line-height:1}
 .cover__latin{font-size:clamp(2.75rem,13vw,4.5rem);font-weight:600;letter-spacing:-.03em;text-indent:-.03em}   /* negative tracking trails the last letter: indent re-centres the word */
@@ -23,10 +23,10 @@
 .cover__about{color:var(--ink-3);font-size:var(--fs-small)}
 
 @media (min-width:900px){
-  .cover__ar{font-size:clamp(6rem,22vh,11rem)}
+  .cover__ar{font-size:clamp(6rem,17vh,11rem)}
   .cover__latin{font-size:clamp(3.5rem,9vh,5.5rem)}
 }
 @media (max-height:640px){
-  .cover__ar{font-size:clamp(4rem,20vw,6rem);line-height:1.2}
+  .cover__ar{font-size:clamp(4rem,20vw,6rem);line-height:1.9}
   .cover__latin{font-size:clamp(2.25rem,9vw,3rem)}
 }

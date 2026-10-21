@@ -107,11 +107,9 @@ mark{background:color-mix(in srgb,var(--gold) 30%,transparent);color:inherit;bor
 .shell{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:max(var(--gx),env(safe-area-inset-left)) max(var(--gx),env(safe-area-inset-right))}
 .hd{display:flex;align-items:center;justify-content:space-between;gap:var(--s2);padding-block:max(var(--s2),env(safe-area-inset-top)) var(--s2);border-bottom:3px double var(--ink)}
 .brand{display:inline-flex;align-items:center;gap:var(--s2);min-height:2.75rem;padding-inline-end:var(--s2);font:600 var(--fs-section)/1 var(--ui-font)}
-.brand__logo{width:2.25rem;height:2.25rem;flex:none}
+/* Same wordmark as the cover. Nastaliq needs a tall line box; negative block margins keep the masthead height unchanged. */
+.brand__ar{flex:none;color:var(--acc-ink);font-family:"Noto Nastaliq Urdu",var(--ar-font);font-weight:700;font-size:1.5rem;line-height:2;margin-block:-.7rem -.3rem}
 .hd__tools{display:flex;gap:var(--s1)}
-.brand-logo{display:block;width:100%;height:100%;overflow:visible;--brand-logo-cut:var(--paper);--brand-logo-highlight:color-mix(in srgb,var(--acc) 62%,white)}
-.brand-logo-primary{color:var(--acc-ink)}
-.brand-logo-secondary{color:color-mix(in srgb,var(--gold) 72%,var(--acc-ink))}
 
 /* ---------- dashboard layout: one column on phones, index rail + results from 1024px ---------- */
 .main{padding-bottom:var(--s5)}

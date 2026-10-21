@@ -1,0 +1,11 @@
+/* Update / offline notice. Sits above the back-to-top button; sheets (top layer) simply cover it. */
+.pwa{position:fixed;z-index:8;inset-inline:max(var(--gx),env(safe-area-inset-left)) max(var(--gx),env(safe-area-inset-right));bottom:calc(max(var(--s4),env(safe-area-inset-bottom)) + 3.75rem);display:grid;justify-items:center;pointer-events:none}
+.pwa__card{pointer-events:auto;display:grid;gap:var(--s3);width:min(100%,28rem);padding:var(--s3) var(--s4);background:var(--paper);color:var(--ink);border:1px solid var(--line-ctl);border-inline-start:3px solid var(--acc-ink);border-radius:var(--r-panel);box-shadow:var(--shadow-sheet)}
+.pwa__card p{font:400 var(--fs-small)/1.5 var(--ui-font)}
+.pwa__acts{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.pwa__acts .btn{flex:1 1 8rem}
+
+/* install help sheet (iOS) */
+.ios-steps{display:grid;gap:var(--s3);padding-inline-start:1.25rem;font:400 var(--fs-body)/1.6 var(--ui-font)}
+.ios-steps li::marker{color:var(--acc-ink);font-weight:600}
+.ios-steps .i{display:inline-block;vertical-align:-.2em;width:1.1em;height:1.1em;color:var(--acc-ink)}

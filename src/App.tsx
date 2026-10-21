@@ -3,10 +3,10 @@ import Cover from './Cover'
 import Onboard from './Onboard'
 import Settings from './Settings'
 import About from './About'
-import BrandLogo from './BrandLogo'
 import { BackToTop, Ic, ICON, Khatam } from './ui'
 import { renderStory, STYLES } from './lib/share'
 import { useHistoryLayer } from './lib/nav'
+import { usePwa } from './lib/pwa'
 import { AR_FONTS, DEFAULTS, ID_FONTS, dailyWord, normalizePrefs, entryNo, entrySeq, majorOf, norm, parseDataset, stripHarakat, search, similarFor, usePersisted, isStringArray, isPlainObject, isMineValue, type Major, type Prefs, type Similar, type Word } from './lib/core'
 
 type Data = { words: Word[]; similar: Similar[]; skipped: number }
@@ -54,6 +54,9 @@ export default function App() {
   const [topic, setTopic] = useState('all')
   const [aboutFrom, setAboutFrom] = useState<'cover' | 'app'>('app')
   const [aboutSeen, setAboutSeen] = usePersisted('aboutSeen', false, v => typeof v === 'boolean')
+  const pw = usePwa()
+  const [askedAt, setAskedAt] = usePersisted('installAsked', 0, v => typeof v === 'number') // when the user last waved the install card away
+  const [iosHelp, setIosHelp] = useState(false)
   const [favs, setFavs] = usePersisted<string[]>('favs', [], isStringArray)
   const [recent, setRecent] = usePersisted<string[]>('recent', [], isStringArray)
   const [data, setData] = useState<Data | null>(null)
@@ -147,6 +150,8 @@ export default function App() {
     if (navigator.canShare?.({ files: [f] })) { try { await navigator.share({ files: [f], title: 'Lughati Vokasi', text: `${shareW.ar} = ${shareW.mean}` }) } catch (e) { if ((e as Error).name !== 'AbortError') download() } }
     else download()
   }
+  const canInstall = !pw.standalone && (pw.installable || pw.iosInstallable)
+  const install = async () => { if (!pw.installable) { setIosHelp(true); return } if ((await pw.install()) === 'dismissed') setAskedAt(Date.now()) }
   const openAbout = (from: 'cover' | 'app') => { setAboutFrom(from); setAboutSeen(true); setStage('about') }
 
   if (stage === 'about') return <About counts={counts} onBack={() => setStage(aboutFrom)} />
@@ -168,7 +173,7 @@ export default function App() {
       <a className="skip" href="#hasil">Lewati ke daftar kata</a>
       <div className="shell">
         <header className="hd">
-          <button className="brand" onClick={() => setStage('cover')} aria-label="Kembali ke sampul"><span className="brand__logo"><BrandLogo decorative /></span>Lughati</button>
+          <button className="brand" onClick={() => setStage('cover')} aria-label="Kembali ke sampul"><span className="brand__ar" lang="ar" dir="rtl" aria-hidden="true">لغتي</span>Lughati</button>
           <div className="hd__tools">
             <button className="icon-btn" onClick={rnd} aria-label="Kata acak" title="Kata acak"><Ic d={ICON.shuffle} /><span className="icon-btn__lbl">Acak</span></button>
             <button className="icon-btn" onClick={() => setCfg(true)} aria-label="Pengaturan tampilan" title="Pengaturan tampilan"><Ic d={ICON.sliders} /><span className="icon-btn__lbl">Tampilan</span></button>
@@ -213,6 +218,11 @@ export default function App() {
               <button className="teaser__open" onClick={() => openAbout('app')}><b>Kenapa kamus ini dibuat?</b>Bahasa Arab yang nyambung dengan jurusanmu. Baca ceritanya.</button>
               <button className="icon-btn" onClick={() => setAboutSeen(true)} aria-label="Tutup pengantar"><Ic d={ICON.close} /></button></div>}
 
+            {/* One card at a time: the story teaser first, the install offer once that is out of the way. */}
+            {aboutSeen && canInstall && Date.now() - askedAt > 14 * 864e5 && <div className="teaser" role="note">
+              <button className="teaser__open" onClick={install}><b>Pasang di layar utama</b>Buka Lughati seperti aplikasi, bahkan tanpa internet.</button>
+              <button className="icon-btn" onClick={() => setAskedAt(Date.now())} aria-label="Tutup tawaran pasang"><Ic d={ICON.close} /></button></div>}
+
             {err && <div className="state state--error" role="alert"><h2>Kamus gagal dimuat</h2><p>{err}</p><button className="btn" onClick={() => setTries(t => t + 1)}>Coba lagi</button></div>}
             {!data && !err && <><p className="state state--load" role="status"><span className="ld" aria-hidden />Memuat kamus…</p><ul className="skel" aria-hidden>{Array.from({ length: 6 }, (_, i) => <li key={i} />)}</ul></>}
             {data && <>
@@ -245,7 +255,7 @@ export default function App() {
         </main>
 
         <footer className="foot">
-          <div className="foot__links"><button className="link" onClick={() => setCfg(true)}>Sesuaikan huruf, warna &amp; tema</button><button className="link" onClick={() => openAbout('app')}>Tentang kamus ini</button></div>
+          <div className="foot__links"><button className="link" onClick={() => setCfg(true)}>Sesuaikan huruf, warna &amp; tema</button><button className="link" onClick={() => openAbout('app')}>Tentang kamus ini</button>{canInstall && <button className="link" onClick={install}>Pasang di layar utama</button>}</div>
           <p>Lughati Vokasi, SMK Muhammadiyah Pencongan. Disusun oleh Sultan Bagus Permadi.</p>
         </footer>
       </div>
@@ -275,6 +285,13 @@ export default function App() {
           <div className="acts acts--stack"><button className="btn btn--primary btn--lg" disabled={!img} onClick={share}>Bagikan</button><button className="btn" disabled={!img} onClick={download}>Unduh PNG</button></div>
           <p className="sub" role="status">{note || 'Gambar 1080×1920, siap untuk Instagram, WhatsApp, atau TikTok Story.'}</p>
         </div>
+      </Dialog>
+      <Dialog open={iosHelp} onClose={() => setIosHelp(false)} title="Pasang di layar utama">
+        <ol className="ios-steps">
+          <li>Buka Lughati di Safari, lalu ketuk tombol Bagikan <Ic d={ICON.share} /> di bilah browser.</li>
+          <li>Gulir menu, lalu pilih <b>Tambah ke Layar Utama</b>.</li>
+          <li>Ketuk <b>Tambah</b>. Ikon Lughati muncul di layar utama dan bisa dibuka tanpa internet.</li>
+        </ol>
       </Dialog>
       <Dialog open={cfg} onClose={() => setCfg(false)} title="Tampilan" flush><Settings p={p} set={setPrefs} count={activeWords.length} onDone={() => setCfg(false)} /></Dialog>
     </div>

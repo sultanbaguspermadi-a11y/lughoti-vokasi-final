@@ -18,7 +18,7 @@ Kosakata Arab per jurusan (RPL, TBKR, Akuntansi, TSM) ditambah kosakata umum, le
 ```bash
 npm install
 npm run dev         # pengembangan
-npm test            # 28 tes: integritas data, pencarian, riwayat Back, alur aplikasi
+npm test            # 76 tes: data, pencarian, riwayat Back, alur aplikasi, service worker, PWA
 npm run build       # cek tipe (src + tests) + build produksi + service worker ke dist/
 ```
 
@@ -32,7 +32,11 @@ Node 22 atau lebih baru (lihat `.nvmrc`).
 | `src/lib/core.ts` | Penyimpanan tervalidasi, normalisasi Arab, parser data, pencarian |
 | `src/lib/nav.ts` | Tombol Back untuk overlay (satu entri riwayat per overlay) |
 | `src/lib/share.ts` | Kartu Story dengan Canvas |
-| `vite.config.ts` | Build + plugin yang menulis `sw.js` berisi daftar berkas hasil build |
+| `pwa/sw.template.js` | Service worker (JS biasa, diuji langsung di `tests/sw.test.ts`) |
+| `pwa/offline-plugin.ts` | Plugin Vite: mengisi versi + daftar berkas ke template, menulis `dist/sw.js` |
+| `src/lib/pwa.ts` | Runtime PWA: prompt pasang, alur update, status online/offline |
+| `src/PwaStatus.tsx` | Notifikasi "versi baru", "siap offline", "sedang offline" |
+| `vite.config.ts` | Konfigurasi build |
 | `tests/` | Vitest (data, logika, jsdom) |
 
 ## Data
@@ -53,6 +57,14 @@ Pilih satu target:
 
 Build memakai path relatif (`base: './'`), jadi berfungsi di sub-path maupun domain sendiri. Service worker memakai nama cache dari hash berkas build, sehingga rilis baru otomatis menggantikan yang lama; `words.json` diperbarui di kunjungan berikutnya.
 
+## PWA
+
+- **Offline penuh:** `sw.js` menyimpan shell (HTML, JS, CSS, font, ikon) dan `words.json`. Shell memakai *cache-first*, jadi aplikasi terbuka instan dan tanpa jaringan. `words.json` memakai *stale-while-revalidate* dan hanya diganti oleh respons JSON yang valid (halaman login wifi tidak bisa menimpanya).
+- **Update tanpa kejutan:** build baru dipasang di belakang layar dan menunggu. Siswa melihat "Versi baru tersedia" dan memilih *Muat ulang*; halaman tidak berganti sendiri di tengah pencarian. Aplikasi yang terpasang mengecek versi baru tiap kembali ke layar (maks. sekali per 30 menit).
+- **Pasang:** Android/Chrome memakai prompt bawaan lewat kartu "Pasang di layar utama" (muncul setelah kartu pengantar, disembunyikan 14 hari bila ditolak) dan tautan di footer. iPhone/iPad menampilkan langkah Bagikan → Tambah ke Layar Utama.
+- **Versi cache** adalah hash isi semua berkas yang disimpan (termasuk manifest dan ikon), bukan hanya nama berkas. Nama cache memuat path scope, sehingga aman di `github.io/<user>/<repo>/` yang berbagi origin dengan proyek lain.
+- Service worker hanya aktif pada build produksi (`npm run build` lalu `npm run preview`). Untuk mencoba: DevTools → Application → Service Workers → centang *Offline*, lalu muat ulang.
+
 ## Privasi
 
 Tidak ada pelacak, akun, atau permintaan ke pihak ketiga. Favorit, riwayat, dan pengaturan hanya tersimpan di `localStorage` perangkat (dengan cadangan di memori bila penyimpanan diblokir).
@@ -61,4 +73,4 @@ Tidak ada pelacak, akun, atau permintaan ke pihak ketiga. Favorit, riwayat, dan 
 - **Pengaturan > Font teks Indonesia** kini berlaku untuk semua teks Indonesia (menu, tab, tombol, arti kata). Pilihan ditambah: Atkinson Hyperlegible.
 - **Atur ulang semua** (tombol di bilah bawah Pengaturan) + **Urungkan**; tombol atur ulang per kelompok nonaktif bila sudah bawaan.
 - Preferensi tersimpan divalidasi (`normalizePrefs`), font/angka rusak kembali ke bawaan.
-- **Sampul** minimalis, rata tengah: judul Arab لغتي (tanpa harakat) dalam font Riq'ah (Aref Ruqaa, teks asli), judul Latin, nama penyusun, satu tombol.
+- **Sampul** minimalis, rata tengah: judul Arab لغتي (tanpa harakat) dalam font Noto Nastaliq Urdu (teks asli), judul Latin, nama penyusun, satu tombol.
